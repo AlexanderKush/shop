@@ -18,64 +18,66 @@ use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('parseEkatalog', function () {
 
-    function mb_str_replace($search, $replace, $string)
-    {
-        $charset = mb_detect_encoding($string);
-        $unicodeString = iconv($charset, "UTF-8", $string);
-        return str_replace($search, $replace, $unicodeString);
+    function getProductsPage($url, $data = '') {
+
+        if (!$data) {
+            $data = file_get_contents($url);
+        }
+        $dom = new DOMDocument();
+        @$dom->loadHTML($data);
+    
+        $xpath = new DOMXPath($dom);
+        $divs = $xpath->query("//div[@class='model-short-div list-item--goods   ']");
+
+        foreach ($divs as $div) {
+            $a = $xpath->query('descendant::a[@class="model-short-title no-u"]', $div)[0];
+            $name = $a->nodeValue;
+    
+            $price = '';
+            $range = $xpath->query('descendant::div[@class="model-price-range"]', $div)[0];
+            if ($range) {
+                $price =  mb_substr(trim(explode('Сра', $range->nodeValue)[0]), 1);
+            }
+            $range = $xpath->query('descendant::div[@class="pr31 ib"]', $div)[0];
+            if ($range) {
+                $price = trim($range->nodeValue);
+            }
+
+            $products[] = [
+                'name' => $name,
+                'price' => $price
+            ];
+
+        }
+
+        return $products;
+
     }
 
     $url = 'https://www.e-katalog.ru/ek-list.php?katalog_=189&search_=rtx+3090';
 
     $data = file_get_contents($url);
-
     $dom = new DOMDocument();
     @$dom->loadHTML($data);
 
     $xpath = new DOMXPath($dom);
+    $divs = $xpath->query("//div[@class='model-short-div list-item--goods   ']");
 
     $totalProductsString = $xpath->query('//span[@class="t-g-q"]')[0]->nodeValue ?? false;
     $totalProducts = preg_replace('/[^0-9]/', '', $totalProductsString);
+    $productsOnePage = $divs->length;
+    $totalPages = ceil($totalProducts / $productsOnePage) - 1;
 
     $products = [];
 
-    function getProductPage() {
+    $products = getProductsPage($url, $data);
 
-        $divs = $xpath->query('//div[contains(@class, \'model-short-div\']');
-        
-    }
-
-    $divs = $xpath->query('//div[contains(@class, \'model-short-div\']');
-
-    $productsOnePage = $divs->length;
-
-    $totalPages = ceil($totalProducts / $productsOnePage);
-
-    foreach ($divs as $div) {
-        $a = $xpath->query('descendant::a[@class="model-short-title no-u"]', $div)[0];
-        $name = $a->nodeValue;
-
-        $price = '';
-        $range = $xpath->query('descendant::div[@class="model-price-range"]', $div)[0];
-        if ($range) {
-            $price =  mb_substr(trim(explode('Сра', $range->nodeValue)[0]), 1);
-            /* foreach ($range->childNodes as $child) {
-                if ($child->nodeName == 'a') {
-                    $price = trim($child->nodeValue);
-                }
-            } */
-            
-            dump($price);
-        }
-        $range = $xpath->query('descendant::div[@class="pr31 ib"]', $div)[0];
-        if ($range) {
-            $price = trim($range->nodeValue);
-        }
-    }
-
-    for ($i = 1; $i < $totalPages; $i++) {
+    for ($i = 1; $i <= $totalPages; $i++) {
         $nextUrl = $url . '&page_=' . $i;
+        $products = array_merge($products, getProductsPage($nextUrl));
     }
+    
+    dd($products);
 
 });
 
