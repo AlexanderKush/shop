@@ -16,6 +16,29 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
+Artisan::command('importCategoriesFromFile', function () {
+    
+    $file = fopen('categories.csv', 'r');
+
+    $i = 0;
+    $insert = [];
+    while ($row = fgetcsv($file, 1000, ';')) {
+        if ($i++ == 0) {
+            $bom = pack('H*','EFBBBF');
+            $row = preg_replace("/^$bom/", '', $row);
+            $columns = $row;
+            continue;
+        }
+
+        $data = array_combine($columns, $row);
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $insert[] = $data;        
+    }
+
+    Category::insert($insert);
+});
+
 Artisan::command('parseEkatalog', function () {
 
     function getProductsPage($url, $data = '') {
@@ -32,6 +55,8 @@ Artisan::command('parseEkatalog', function () {
         foreach ($divs as $div) {
             $a = $xpath->query('descendant::a[@class="model-short-title no-u"]', $div)[0];
             $name = $a->nodeValue;
+
+            if (empty($name)) continue;
     
             $price = '';
             $range = $xpath->query('descendant::div[@class="model-price-range"]', $div)[0];
@@ -61,7 +86,7 @@ Artisan::command('parseEkatalog', function () {
     @$dom->loadHTML($data);
 
     $xpath = new DOMXPath($dom);
-    $divs = $xpath->query("//div[@class='model-short-div list-item--goods   ']");
+    $divs = $xpath->query("//div[contains(@class, 'model-short-div')]");
 
     $totalProductsString = $xpath->query('//span[@class="t-g-q"]')[0]->nodeValue ?? false;
     $totalProducts = preg_replace('/[^0-9]/', '', $totalProductsString);
@@ -76,8 +101,12 @@ Artisan::command('parseEkatalog', function () {
         $nextUrl = $url . '&page_=' . $i;
         $products = array_merge($products, getProductsPage($nextUrl));
     }
-    
-    dd($products);
+
+    $file = fopen('videocards.csv', 'w');
+    foreach ($products as $product) {
+        fputcsv($file, $product, ';');
+    }
+    fclose($file);
 
 });
 
@@ -87,12 +116,14 @@ Artisan::command('massCategoriesInsert', function () {
         [
             'name' => 'Видеокарты',
             'description' => 'Ждём rtx 3050',
-            'created_at' => date('Y-m-d H:i:s') 
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
         ],
         [
             'name' => 'Процессоры',
             'description' => 'Ждём i5',
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
         ]
     ];
 
