@@ -1,9 +1,12 @@
 <?php
 
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,15 +19,25 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
+Artisan::command('orderTest',function () {
+
+    $order = Order::first();
+
+    $order->products->each(function ($product) {
+        dump ($product->pivot->quantity);
+    });
+
+});
+
 Artisan::command('importCategoriesFromFile', function () {
-    
+
     $file = fopen('categories.csv', 'r');
 
     $i = 0;
     $insert = [];
     while ($row = fgetcsv($file, 1000, ';')) {
         if ($i++ == 0) {
-            $bom = pack('H*','EFBBBF');
+            $bom = pack('H*', 'EFBBBF');
             $row = preg_replace("/^$bom/", '', $row);
             $columns = $row;
             continue;
@@ -33,7 +46,7 @@ Artisan::command('importCategoriesFromFile', function () {
         $data = array_combine($columns, $row);
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $insert[] = $data;        
+        $insert[] = $data;
     }
 
     Category::insert($insert);
@@ -41,14 +54,15 @@ Artisan::command('importCategoriesFromFile', function () {
 
 Artisan::command('parseEkatalog', function () {
 
-    function getProductsPage($url, $data = '') {
+    function getProductsPage($url, $data = '')
+    {
 
         if (!$data) {
             $data = file_get_contents($url);
         }
         $dom = new DOMDocument();
         @$dom->loadHTML($data);
-    
+
         $xpath = new DOMXPath($dom);
         $divs = $xpath->query("//div[@class='model-short-div list-item--goods   ']");
 
@@ -57,7 +71,7 @@ Artisan::command('parseEkatalog', function () {
             $name = $a->nodeValue;
 
             if (empty($name)) continue;
-    
+
             $price = '';
             $range = $xpath->query('descendant::div[@class="model-price-range"]', $div)[0];
             if ($range) {
@@ -72,11 +86,9 @@ Artisan::command('parseEkatalog', function () {
                 'name' => $name,
                 'price' => $price
             ];
-
         }
 
         return $products;
-
     }
 
     $url = 'https://www.e-katalog.ru/ek-list.php?katalog_=189&search_=rtx+3090';
@@ -107,7 +119,6 @@ Artisan::command('parseEkatalog', function () {
         fputcsv($file, $product, ';');
     }
     fclose($file);
-
 });
 
 Artisan::command('massCategoriesInsert', function () {
@@ -128,7 +139,6 @@ Artisan::command('massCategoriesInsert', function () {
     ];
 
     Category::insert($categories);
-
 });
 
 Artisan::command('updateCategory', function () {
@@ -145,9 +155,10 @@ Artisan::command('deleteCategory', function () {
 });
 
 Artisan::command('createCategory', function () {
+    //Auth::loginUsingId(1);
     $category = new Category([
-        'name' => 'Видеокарты',
-        'description' => 'Ждём rtx 3050'
+        'name' => 'Видеокарты1',
+        'description' => 'Ждём rtx 3050 1'
     ]);
     $category->save();
 });
@@ -161,7 +172,40 @@ Artisan::command('inspire', function () {
     })->pluck('address');
 
     $addresses = $user->addresses()->where('main', 1)->get();
-    dd($addresses);
+    //dd($addresses);
 
-    $this->comment(Inspiring::quote());
+    //$this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+
+Artisan::command('queryBuilder', function () {
+
+    $data = DB::table('categories as c')
+        ->select(
+            'c.name',
+            'c.description'
+        )
+        ->where('name', 'Процессоры')
+        ->get();
+
+    $data = DB::table('categories as c')
+        ->select(
+            'c.name',
+            DB::raw('count(p.id) as product_quantity'),
+            DB::raw('sum(p.price) as priceAmount')
+        )
+        ->leftJoin('products as p', function ($join) {
+            $join->on('c.id', 'p.category_id');
+        })
+        ->groupBy('c.id')
+        ->get();
+
+        DB::table('categories')
+            ->orderBy('id')
+            ->chunk(3, function ($categories) {
+                dump($categories->count());
+            });
+
+        //dd($data);
+
+});

@@ -45,6 +45,11 @@
                     <ul class="navbar-nav ms-auto">
  
                         <!-- Authentication Links -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('cart') }}">
+                                Корзина ({{ array_sum(session('cart') ?? []) }})
+                            </a>
+                        </li>
                         @guest
 
                             @if (Route::has('login'))
@@ -60,7 +65,7 @@
                             @endif
                         @else
 
-                            @if (Auth::user()->is_admin)
+                            @if (Auth::user()->isAdmin())
 
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('adminAdmin') }}">Админка</a>

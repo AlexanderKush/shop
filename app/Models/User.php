@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -47,4 +47,18 @@ class User extends Authenticatable
         return $this->hasMany(Address::class);
     }
 
+    public function roles ()
+    {
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    public function isAdmin ()
+    {
+        return $this->roles->pluck('name')->contains(env('ADMIN_ROLE'));
+    }
+
+    public function getMainAddress ()
+    {
+        return $this->addresses()->where('main', 1)->first();
+    }
 }

@@ -34,6 +34,12 @@
         </div>
     @endif
 
+    @if (session('profileSaved'))
+        <div class="alert alert-success" role="alert">
+            Профиль успешно сохранён!
+        </div>
+    @endif
+
     <form method="post" action="{{ route('saveProfile') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" value="{{ $user->id }}" name="userId">
@@ -54,11 +60,28 @@
             <input type="text" name="name" value="{{ $user->name }}" class="form-control">
         </div>
         <div class="mb-3">
+            <label class="form-label">Текущий пароль</label>
+            <input type="password" name="current_password" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Новый пароль</label>
+            <input type="password" name="password_new" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Повторите новый пароль</label>
+            <input type="password" name="password_new_confirmation" class="form-control">
+        </div>
+        <div class="mb-3">
             <label class="form-label">Список адресов</label>
             @forelse ($user->addresses as $address)
-                <li @if($address->main)class="fw-bold"@endif>{{ $address->address }}</li>
+                <div>
+                    <input type="radio" id="address_{{ $address->id }}" name="address" @if ($address->main)checked @endif value="{{ $address->id }}">
+                    <label for="address_{{ $address->id }}">{{ $address->address }}</label>
+                </div>
             @empty
-                <li><em>Список адресов пуст</em></li>
+                <div>
+                    Список адресов пуст
+                </div>
             @endforelse
         </div>
         <div class="mb-3">
