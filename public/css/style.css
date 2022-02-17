@@ -1,1 +1,19 @@
+h1 {
+  margin-bottom: 1.5rem;
+}
 
+.card-img-top.card-img-top--min {
+  width: 72px;
+}
+
+td.id {
+  width: 0;
+}
+
+td.image {
+  width: 10%;
+}
+
+td.name {
+  width: 20%;
+}

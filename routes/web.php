@@ -24,9 +24,18 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/', [AdminController::class, 'admin'])->name('adminAdmin');
     Route::get('/users', [AdminController::class, 'users'])->name('adminUsers');
     Route::get('/products', [AdminController::class, 'products'])->name('adminProducts');
+    Route::prefix('products')->group(function() {
+        Route::post('/createProduct', [AdminController::class, 'createProduct'])->name('createProduct');
+    });
+    Route::get('/product/{product}', [AdminController::class, 'product'])->name('adminProduct');
     Route::get('/categories', [AdminController::class, 'categories'])->name('adminCategories');
+    Route::prefix('categories')->group(function() {
+        Route::post('/createCategory', [AdminController::class, 'createCategory'])->name('createCategory');
+    });
+    Route::get('/category/{category}', [AdminController::class, 'category'])->name('adminCategory');
     Route::get('/enterAsUser/{id}', [AdminController::class, 'enterAsUser'])->name('enterAsUser');
     Route::post('/exportCategories', [AdminController::class, 'exportCategories'])->name('exportCategories');
+    Route::post('/exportProducts', [AdminController::class, 'exportProducts'])->name('exportProducts');
     Route::prefix('roles')->group(function() {
         Route::post('/add', [AdminController::class, 'addRole'])->name('addRole');
         Route::post('/addRoleToUser', [AdminController::class, 'addRoleToUser'])->name('addRoleToUser');
