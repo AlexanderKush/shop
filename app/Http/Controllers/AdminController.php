@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ExportCategories;
+use App\Jobs\ExportProducts;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,14 +33,120 @@ class AdminController extends Controller
         return view('admin.users', $data);
     }
 
+    public function product (Product $product)
+    {
+        $data = [
+            'title' => 'Редактирование продукта',
+            'product' => $product,
+        ];
+
+        return view('admin.product', $data);
+    }
+
     public function products ()
     {
-        return view('admin.products');
+        $products = Product::get();
+        $categories = Category::get();
+
+        $data = [
+            'title' => 'Список товаров',
+            'products' => $products,
+            'categories' => $categories
+        ];
+
+        return view('admin.products', $data);
+    }
+
+    public function category (Category $category)
+    {
+
+        $data = [
+            'title' => 'Редактирование категории',
+            'category' => $category,
+        ];
+
+        return view('admin.category', $data);
+    }
+
+    public function createProduct ()
+    {
+        $input = request()->all();
+        $picture = $input['picture'] ?? null;
+
+        request()->validate([
+            'name' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'category_id' => 'required',
+        ]);
+
+        $data = [];
+
+        $data['name'] = $input['name'];
+        $data['description'] = $input['description'];
+
+        if ($picture) {
+            $ext = $picture->getClientOriginalExtension();
+            $fileName = time() . rand(10000, 99999) . '.' . $ext;
+            $picture->storeAs('public/products', $fileName);
+            $picture = 'products/' . $fileName;
+            $data['picture'] = $picture;
+        }
+
+        $data['price'] = $input['price'];
+        $data['category_id'] = $input['category_id'];
+
+        $product = new Product($data);
+
+        $product->save();
+
+        session()->flash('productCreate');
+
+        return back();
     }
 
     public function categories ()
     {
-        return view('admin.categories');
+        $categories = Category::get();
+
+        $data = [
+            'title' => 'Список категорий',
+            'categories' => $categories,
+        ];
+
+        return view('admin.categories', $data);
+    }
+
+    public function createCategory ()
+    {
+        $input = request()->all();
+        $picture = $input['picture'] ?? null;
+
+        request()->validate([
+            'name' => 'required',
+            'description' => 'required',
+        ]);
+
+        $data = [];
+
+        $data['name'] = $input['name'];
+        $data['description'] = $input['description'];
+
+        if ($picture) {
+            $ext = $picture->getClientOriginalExtension();
+            $fileName = time() . rand(10000, 99999) . '.' . $ext;
+            $picture->storeAs('public/categories', $fileName);
+            $picture = 'categories/' . $fileName;
+            $data['picture'] = $picture;
+        }
+
+        $category = new Category($data);
+
+        $category->save();
+
+        session()->flash('categoryCreate');
+
+        return back();
     }
 
     public function enterAsUser ($id)
@@ -50,6 +159,13 @@ class AdminController extends Controller
     {
         ExportCategories::dispatch();
         session()->flash('startExportCategories');
+        return back();
+    }
+
+    public function exportProducts()
+    {
+        ExportProducts::dispatch();
+        session()->flash('startExportProducts');
         return back();
     }
 
