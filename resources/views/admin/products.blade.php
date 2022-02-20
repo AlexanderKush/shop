@@ -22,6 +22,11 @@
             Выгрузка товаров запущена
         </div>
     @endif
+    @if (session('startImportProducts'))
+        <div class="alert alert-success">
+            Импорт товаров запущен
+        </div>
+    @endif
 
     <h1>Список продуктов</h1>
 
@@ -96,5 +101,17 @@
 
     <br>
     <br>
+    <h2>Импорт товаров</h2>
+    <form method="post" action="{{ route('importProducts') }}" enctype="multipart/form-data">
+        @csrf
+        <div class="row">
+            <div class="col-2">
+                <button type="submit" class="btn btn-primary">Загрузить товары</button>
+            </div>
+            <div class="col-8">
+                <input type="file" name="file" class="form-control">
+            </div>
+    </form>
+
 
 @endsection

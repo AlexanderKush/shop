@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,25 +12,40 @@ use Illuminate\Support\Facades\Hash;
 class ProfileController extends Controller
 {
 
+    public function getOrdersUser ($user_id)
+    {
+        $orders = Order::where('user_id', $user_id)->get();
+
+        foreach ($orders as $id => $order) {
+            $orders[$id]['products'] = $order->products;
+        }
+
+        return $orders;
+    }
+
     public function profile (User $user)
     {
-        if (!Auth::user()) 
+        $authUser = Auth::user();
+
+        if (!$authUser) 
             return redirect()->route('home');
-        if (Auth::user()->isAdmin() || $user->id == Auth::user()->id)
-            return view('profile', compact('user'));
+        if ($authUser->isAdmin() || $user->id == $authUser->id) {
+            $orders = $this->getOrdersUser($authUser->id);
+            return view('profile', compact('user', 'orders'));
+        }
 
         return redirect()->route('home');
     }
 
     public function save ()
     {
-
         $input = request()->all();
         $name = $input['name'];
         $email = $input['email'];
         $userId = $input['userId'];
         $picture = $input['picture'] ?? null;
         $new_address = $input['new_address'];
+        $new_address_main = $input['new_address_main'] ?? null;
         $password_new = $input['password_new'] ?? null;
         $user = User::find($userId);
 
@@ -58,7 +74,7 @@ class ProfileController extends Controller
             Address::create([
                 'user_id' => $user->id,
                 'address' => $new_address,
-                'main' => 1
+                'main' => $new_address_main == 'on' ? '1' : '0'
             ]);
         }
 

@@ -22,6 +22,11 @@
             Выгрузка категорий запущена
         </div>
     @endif
+    @if (session('startImportCategories'))
+        <div class="alert alert-success">
+            Импорт категорий запущен
+        </div>
+    @endif
 
     <h1>Список категорий</h1>
 
@@ -80,18 +85,15 @@
     <br>
     <br>
     <h2>Импорт категорий</h2>
-    <form method="post" action="{{ route('exportCategories') }}">
+    <form method="post" action="{{ route('importCategories') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-2">
                 <button type="submit" class="btn btn-primary">Загрузить категории</button>
             </div>
             <div class="col-8">
-                <input type="file" class="form-control">
+                <input type="file" name="file" class="form-control">
             </div>
     </form>
-
-    <br>
-    <br>
 
 @endsection

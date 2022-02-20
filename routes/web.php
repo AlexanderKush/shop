@@ -35,7 +35,9 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/category/{category}', [AdminController::class, 'category'])->name('adminCategory');
     Route::get('/enterAsUser/{id}', [AdminController::class, 'enterAsUser'])->name('enterAsUser');
     Route::post('/exportCategories', [AdminController::class, 'exportCategories'])->name('exportCategories');
+    Route::post('/importCategories', [AdminController::class, 'importCategories'])->name('importCategories');
     Route::post('/exportProducts', [AdminController::class, 'exportProducts'])->name('exportProducts');
+    Route::post('/importProducts', [AdminController::class, 'importProducts'])->name('importProducts');
     Route::prefix('roles')->group(function() {
         Route::post('/add', [AdminController::class, 'addRole'])->name('addRole');
         Route::post('/addRoleToUser', [AdminController::class, 'addRoleToUser'])->name('addRoleToUser');
@@ -47,6 +49,7 @@ Route::prefix('cart')->group(function () {
     Route::post('/removeFromCart', [CartController::class, 'removeFromCart'])->name('removeFromCart');
     Route::post('/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
     Route::post('/createOrder', [CartController::class, 'createOrder'])->name('createOrder');
+    Route::post('/repeatOrder', [CartController::class, 'repeatOrder'])->name('repeatOrder');
 });
 
 Route::get('/category/{category}', [HomeController::class, 'category'])->name('category');

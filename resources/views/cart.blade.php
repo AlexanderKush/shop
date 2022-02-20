@@ -12,6 +12,14 @@
 @endsection
 
 @section('content')
+
+    @if (session('repeatOrder'))
+        <div class="alert alert-success" role="alert">
+            Товары из заказа успешно добавлены в корзину!
+        </div>
+    @endif
+    <h1>Корзина</h1>
+
     <table class="table table-bordered">
         <thead>
             <tr>

@@ -69,6 +69,27 @@ class CartController extends Controller
         return back();
     }
 
+    public function repeatOrder ()
+    {
+        $id = request('id');
+        $order = Order::where('id', $id)->first();
+        $products = $order->products;
+
+        $cart = session('cart') ?? [];
+        
+        foreach ($products as $product) {
+            if (isset($cart[$product->id])) {
+                $cart[$product->id] = ++$cart[$product->id];
+            } else {
+                $cart[$product->id] = 1;
+            }
+        }
+
+        session()->put('cart', $cart);
+        session()->flash('repeatOrder');
+        return redirect()->route('cart');
+    }
+
     public function createOrder ()
     {
 
