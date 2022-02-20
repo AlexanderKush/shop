@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class ImportCategories implements ShouldQueue
 {
@@ -33,7 +34,7 @@ class ImportCategories implements ShouldQueue
      */
     public function handle()
     {
-        $file = fopen($this->tmp_file, 'r');
+        $file = fopen(Storage::path($this->tmp_file), 'r');
         $i = 0;
         $insert = [];
         while ($row = fgetcsv($file, 1000, ';')) {
@@ -60,6 +61,6 @@ class ImportCategories implements ShouldQueue
 
         Category::insert($insert);
 
-        unlink($this->tmp_file);
+        unlink(Storage::path($this->tmp_file));
     }
 }
