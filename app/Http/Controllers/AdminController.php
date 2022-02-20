@@ -177,8 +177,7 @@ class AdminController extends Controller
 
         $ext = $file->getClientOriginalExtension();
         $fileName = time() . rand(10000, 99999) . '.' . $ext;
-        $file->storeAs('public/tmp', $fileName);
-        $tmp_file = $_SERVER['DOCUMENT_ROOT'] . '\\storage\tmp\\' . $fileName;
+        $tmp_file = $file->storeAs('public/tmp', $fileName);
 
         ImportCategories::dispatch($tmp_file);
         session()->flash('startImportCategories');
@@ -203,9 +202,7 @@ class AdminController extends Controller
 
         $ext = $file->getClientOriginalExtension();
         $fileName = time() . rand(10000, 99999) . '.' . $ext;
-        $file->storeAs('public/tmp', $fileName);
-        //dd(public_path($file));
-        $tmp_file = $_SERVER['DOCUMENT_ROOT'] . '\\storage\tmp\\' . $fileName;
+        $tmp_file = $file->storeAs('public/tmp', $fileName);
 
         ImportProducts::dispatch($tmp_file);
         session()->flash('startImportProducts');
