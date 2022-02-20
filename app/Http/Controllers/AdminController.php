@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ExportCategories;
 use App\Jobs\ExportProducts;
+use App\Jobs\ImportCategories;
+use App\Jobs\ImportProducts;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
@@ -78,6 +80,7 @@ class AdminController extends Controller
             'description' => 'required',
             'price' => 'required',
             'category_id' => 'required',
+            'picture' => 'mimes:jpg,bmp,png,webp|nullable'
         ]);
 
         $data = [];
@@ -125,6 +128,7 @@ class AdminController extends Controller
         request()->validate([
             'name' => 'required',
             'description' => 'required',
+            'picture' => 'mimes:jpg,bmp,png,webp|nullable'
         ]);
 
         $data = [];
@@ -162,10 +166,49 @@ class AdminController extends Controller
         return back();
     }
 
+    public function importCategories()
+    {
+        request()->validate([
+            'file' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $input = request()->all();
+        $file = $input['file'];
+
+        $ext = $file->getClientOriginalExtension();
+        $fileName = time() . rand(10000, 99999) . '.' . $ext;
+        $file->storeAs('public/tmp', $fileName);
+        $tmp_file = $_SERVER['DOCUMENT_ROOT'] . '\\storage\tmp\\' . $fileName;
+
+        ImportCategories::dispatch($tmp_file);
+        session()->flash('startImportCategories');
+        return back();
+    }
+
     public function exportProducts()
     {
         ExportProducts::dispatch();
         session()->flash('startExportProducts');
+        return back();
+    }
+
+    public function importProducts()
+    {
+        request()->validate([
+            'file' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $input = request()->all();
+        $file = $input['file'];
+
+        $ext = $file->getClientOriginalExtension();
+        $fileName = time() . rand(10000, 99999) . '.' . $ext;
+        $file->storeAs('public/tmp', $fileName);
+        //dd(public_path($file));
+        $tmp_file = $_SERVER['DOCUMENT_ROOT'] . '\\storage\tmp\\' . $fileName;
+
+        ImportProducts::dispatch($tmp_file);
+        session()->flash('startImportProducts');
         return back();
     }
 
