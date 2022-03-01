@@ -97,11 +97,12 @@ class CartController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'address' => 'required',
-            'register_confirmation' => 'accepted'
+            'register_confirmation' => 'sometimes'
         ]);
 
         DB::transaction(function () {
             $user = Auth::user();
+            $password = '';
             if (!$user) {
                 $password = \Illuminate\Support\Str::random(8);
                 $user = User::create([
@@ -142,6 +143,7 @@ class CartController extends Controller
                 'name' => $user->name,
                 'password' => $password
             ];
+
             Mail::to($user->email)->send(new OrderCreated($data));
         });    
 

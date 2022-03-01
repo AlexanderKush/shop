@@ -37,7 +37,7 @@
 @endsection
 
 @section('content')
-<div class="container">
+<h1>{{ $categoryName }}</h1>
     <div class="row">
         @foreach ($products as $product)
         <div class="col-3 mb-4">
@@ -73,5 +73,4 @@
         </div>
         @endforeach
     </div>
-</div>
 @endsection

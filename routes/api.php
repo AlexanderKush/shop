@@ -19,12 +19,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+/* Route::post('/test', function () { */
 Route::get('/test', function () {
     $id = request('id');
-    if (!$id) {
-        return User::get();
-    }
     // sleep(3)
-    return User::findOrFail($id);
+    if (!$id) {
+        return User::take(4)->get();
+    }
+    return [User::findOrFail($id)];
 });
