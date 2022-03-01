@@ -70,7 +70,11 @@
             <label class="form-label">Повторите новый пароль</label>
             <input type="password" name="password_new_confirmation" class="form-control">
         </div>
-        <div class="mb-3">
+        <list-addresses-component
+            :addresses="{{ $user->addresses }}"
+        >
+        </list-addresses-component>
+<!--         <div class="mb-3">
             <label class="form-label">Список адресов</label>
             @forelse ($user->addresses as $address)
                 <div class="form-check">
@@ -82,7 +86,7 @@
                     Список адресов пуст
                 </div>
             @endforelse
-        </div>
+        </div> -->
         <div class="mb-3">
             <label class="form-label">Новый адрес</label>
             <input type="text" name="new_address" class="form-control">
@@ -94,7 +98,12 @@
         <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
 
-    <br>
+    <order-history-component
+        :orders="{{ $orders }}"
+        repeat-order="{{ route('repeatOrder')}}"
+    ></order-history-component>
+
+<!--     <br>
     <br>
     <h2>История заказов</h2>
     <table class="table table-bordered">
@@ -134,7 +143,7 @@
                     <td class="text-center">
                         <form method="post" action="{{ route('repeatOrder')}}">
                             @csrf
-                            <button type="submit"class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary">
                                 <input type="hidden" name="id" value="{{ $order->id }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
@@ -151,6 +160,6 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>
+    </table> -->
 
 @endsection

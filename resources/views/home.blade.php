@@ -16,7 +16,15 @@
 @endsection
 
 @section('content')
-<div class="row">
+
+<categories-component
+    :categories="{{ $categories }}"
+    route-category="{{ route('category', '') }}"
+    page-title="Популярные категории"
+    test="test" >
+</categories-component>
+
+<!-- <div class="row">
 
     @foreach ($categories as $category)
     <div class="col-4 mb-4">
@@ -33,5 +41,5 @@
     </div>
     @endforeach
 
-</div>
+</div> -->
 @endsection
