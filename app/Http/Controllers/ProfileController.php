@@ -67,9 +67,11 @@ class ProfileController extends Controller
 
         if ($new_address) {
 
-            Address::where('user_id', $user->id)->update([
-                'main' => 0
-            ]);
+            if ($new_address_main) {
+                Address::where('user_id', $user->id)->update([
+                    'main' => 0
+                ]);
+            }
 
             Address::create([
                 'user_id' => $user->id,
