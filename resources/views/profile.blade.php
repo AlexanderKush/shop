@@ -70,11 +70,11 @@
             <label class="form-label">Повторите новый пароль</label>
             <input type="password" name="password_new_confirmation" class="form-control">
         </div>
-        <list-addresses-component
+<!--         <list-addresses-component
             :addresses="{{ $user->addresses }}"
         >
-        </list-addresses-component>
-<!--         <div class="mb-3">
+        </list-addresses-component> -->
+        <div class="mb-3">
             <label class="form-label">Список адресов</label>
             @forelse ($user->addresses as $address)
                 <div class="form-check">
@@ -86,7 +86,7 @@
                     Список адресов пуст
                 </div>
             @endforelse
-        </div> -->
+        </div>
         <div class="mb-3">
             <label class="form-label">Новый адрес</label>
             <input type="text" name="new_address" class="form-control">

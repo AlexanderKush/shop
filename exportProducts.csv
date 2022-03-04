@@ -20,6 +20,8 @@ id;name;description;picture;price;category;created_at;updated_at
 19;"et occaecati omnis aut reprehenderit dicta";"Ea enim minima tempora nisi doloremque et fuga.";products/no_picture.png;316871.4;7;2022-02-07T19:10:49.000000Z;2022-02-07T19:10:49.000000Z
 20;"cumque fugit provident quidem at corrupti";"Similique veniam expedita illo ut cum deserunt.";products/no_picture.png;256336.87;7;2022-02-07T19:10:49.000000Z;2022-02-07T19:10:49.000000Z
 21;"soluta itaque totam accusantium";"Et quis ea totam eos.";products/no_picture.png;14924.81;9;2022-02-07T19:10:49.000000Z;2022-02-07T19:10:49.000000Z
-23;"RTX 745";"Покупайте пока можете";products/164513580919572.jpg;7750;7;2022-02-17T22:10:09.000000Z;2022-02-17T22:10:09.000000Z
-24;RT-ЧЁ;"Не стоит покупать";products/no_picture.png;100;7;2022-02-17T22:10:41.000000Z;2022-02-17T22:10:41.000000Z
-25;"Серия RT";"Видеокарта из 1-ой категории";products/164513791356423.jpg;1250;7;2022-02-17T22:45:13.000000Z;2022-02-17T22:45:13.000000Z
+23;"RTX 745";"Покупайте пока можете";products/164513580919572.jpg;7750;7;2022-02-17T22:10:09.000000Z;2022-03-01T13:33:45.000000Z
+24;RT-ЧЁ;"Не стоит покупать";products/no_picture.png;100;7;2022-02-17T22:10:41.000000Z;2022-03-01T13:33:45.000000Z
+25;"Серия RT";"Видеокарта из 1-ой категории или нет...";products/164513791356423.jpg;1250;7;2022-02-17T22:45:13.000000Z;2022-03-01T13:33:45.000000Z
+26;"Калькулятор Apple";"Тест от 01.03.2022";products/164614094835008.png;99999;26;2022-03-01T13:22:28.000000Z;2022-03-01T13:22:28.000000Z
+37;"Калькулятор 2";123;products/164615081513057.png;234;26;2022-03-01T16:06:55.000000Z;2022-03-01T16:06:55.000000Z
